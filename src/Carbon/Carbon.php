@@ -570,6 +570,34 @@ class Carbon extends DateTime
     }
 
     /**
+     * @inheritdoc
+     */
+    public function modify($modify)
+    {
+        $pattern = '/( ?[-+]?\d?\w* months?)?( ?[-+]?\d?\w* years?)?/i';
+        $modify = preg_replace_callback(
+            $pattern,
+            function($matches) use ($pattern) {
+                if (empty($matches[0])) {
+                    return;
+                }
+                $orDay = $this->format('j');
+                $this->setDate(null, null, 1);
+                if (!parent::modify($matches[0])) {
+                    return;
+                }
+                $this->setDate(null, null, $orDay);
+                return;
+            },
+            $modify
+        );
+        if ($modify = trim($modify)) {
+            return parent::modify($modify);
+        }
+        return $this;
+    }
+
+    /**
      * Set the instance's year
      *
      * @param integer $value
@@ -622,6 +650,13 @@ class Carbon extends DateTime
      */
     public function setDate($year, $month, $day)
     {
+        if (null == $year) $year = $this->format('Y');
+        if (null == $month) $month = $this->format('n');
+        if (null == $day) $day = $this->format('j');
+
+        $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        $day = $day > $daysInMonth ? $daysInMonth : $day;
+
         parent::setDate($year, $month, $day);
 
         return $this;
