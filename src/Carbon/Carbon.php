@@ -572,13 +572,13 @@ class Carbon extends DateTime
                 parent::setTimestamp($value);
                 break;
 
+            case 'timezone_type':
             case 'timezone':
             case 'tz':
                 $this->setTimezone($value);
                 break;
 
             case 'date':
-            case 'timezone_type':
                 // HHVM trying to set the date on __sleep mode
                 break;
 
