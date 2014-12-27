@@ -578,6 +578,7 @@ class Carbon extends DateTime
                 break;
 
             case 'date':
+            case 'timezone_type':
                 // HHVM trying to set the date on __sleep mode
                 break;
 
